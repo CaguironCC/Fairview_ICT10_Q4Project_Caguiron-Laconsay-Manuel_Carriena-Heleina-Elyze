@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+   <title>10-Sapphire | Classmates</title>
+  
+   <link rel="stylesheet" href="https://pyscript.net/releases/2025.7.3/core.css">
+   <script type="module" src="https://pyscript.net/releases/2025.7.3/core.js"></script>
+  
+   <py-config>
+       packages = ['numpy', 'matplotlib']
+   </py-config>
+
+
+   <style>
+       * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+       }
+
+
+       body {
+           font-family: system-ui, 'Segoe UI', sans-serif;
+           background: linear-gradient(145deg, #eef2f9 0%, #d4dfed 100%);
+           min-height: 100vh;
+           display: flex;
+           flex-direction: column;
+           color: #142d3c;
+       }
+
+
+       .navbar {
+           background: rgba(255, 255, 255, 0.92);
+           backdrop-filter: blur(10px);
+           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+           padding: 0.9rem 2rem;
+           position: sticky;
+           top: 0;
+           width: 100%;
+           border-bottom: 1px solid rgba(44, 125, 160, 0.15);
+       }
+
+
+       .nav-container {
+           max-width: 1100px;
+           margin: 0 auto;
+           display: flex;
+           align-items: center;
+           justify-content: space-between;
+           flex-wrap: wrap;
+           gap: 1rem;
+       }
+
+
+       .section-name {
+           font-size: 1.6rem;
+           font-weight: 700;
+           background: linear-gradient(130deg, #0f3b5f, #2c7da0);
+           background-clip: text;
+           -webkit-background-clip: text;
+           color: transparent;
+       }
+
+
+       .nav-links {
+           display: flex;
+           gap: 0.6rem;
+           flex-wrap: wrap;
+       }
+
+
+       .nav-btn {
+           background: transparent;
+           padding: 8px 24px;
+           border-radius: 40px;
+           font-weight: 500;
+           font-size: 0.9rem;
+           text-decoration: none;
+           color: #2c5368;
+           display: inline-block;
+           transition: all 0.2s;
+       }
+
+
+       .nav-btn.active {
+           background: #2c7da0;
+           color: white;
+           box-shadow: 0 4px 8px rgba(44,125,160,0.25);
+       }
+
+
+       .nav-btn:hover {
+           background: rgba(44, 125, 160, 0.1);
+           transform: translateY(-1px);
+       }
+
+
+       .main-wrapper {
+           flex: 1;
+           width: 100%;
+           max-width: 1100px;
+           margin: 2rem auto;
+           padding: 0 1.5rem;
+       }
+
+
+       .tracker-card {
+           background: rgba(255, 255, 255, 0.95);
+           border-radius: 32px;
+           box-shadow: 0 25px 40px -14px rgba(0, 0, 0, 0.12);
+           padding: 2rem 2.2rem;
+           width: 100%;
+           backdrop-filter: blur(2px);
+           border: 1px solid rgba(255,255,255,0.6);
+       }
+
+
+       h2 {
+           font-size: 1.8rem;
+           font-weight: 700;
+           margin-bottom: 0.25rem;
+           color: #0f3b5f;
+           text-align: center;
+           letter-spacing: -0.2px;
+       }
+
+
+       .subhead {
+           color: #4a627a;
+           text-align: center;
+           margin-bottom: 2rem;
+           font-size: 0.9rem;
+           border-bottom: 1.5px solid #e2e8f0;
+           padding-bottom: 0.9rem;
+           font-weight: 450;
+       }
+
+
+       .action-buttons {
+           display: flex;
+           gap: 0.9rem;
+           justify-content: center;
+           margin-bottom: 1.8rem;
+       }
+
+
+       .class-btn {
+           padding: 10px 32px;
+           border-radius: 60px;
+           border: none;
+           font-weight: 600;
+           background: #2c7da0;
+           color: white;
+           cursor: pointer;
+           font-size: 0.9rem;
+           transition: 0.2s;
+           box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+       }
+
+
+       .class-btn:hover {
+           background: #1f5e7e;
+           transform: scale(0.97);
+       }
+
+
+       .list-header {
+           font-size: 1.2rem;
+           font-weight: 600;
+           margin: 1rem 0 0.75rem 0;
+           color: #0f3b5f;
+           text-align: center;
+       }
+
+
+       #dynamic-classlist {
+           display: flex;
+           flex-direction: column;
+           gap: 0.7rem;
+           margin-bottom: 1.2rem;
+           max-height: 480px;
+           overflow-y: auto;
+           padding-right: 6px;
+       }
+
+
+       .classmate-entry {
+           background: #f8fafd;
+           padding: 14px 18px;
+           border-radius: 24px;
+           border-left: 5px solid #2c7da0;
+           font-size: 0.9rem;
+           transition: all 0.1s;
+           box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+           font-weight: 500;
+           color: #1f3b4c;
+       }
+
+
+       .add-panel {
+           background: #eef3fa;
+           border-radius: 28px;
+           padding: 1.4rem;
+           margin-top: 1.8rem;
+           border: 1px solid rgba(44,125,160,0.2);
+       }
+
+
+       .add-panel h4 {
+           margin-bottom: 0.8rem;
+           font-size: 1rem;
+           color: #0f3b5f;
+           font-weight: 700;
+       }
+
+
+       .input-row {
+           display: flex;
+           gap: 0.8rem;
+           flex-wrap: wrap;
+           margin-bottom: 0.9rem;
+       }
+
+
+       .input-row input {
+           flex: 1;
+           padding: 12px 16px;
+           border: 1.5px solid #dce5ec;
+           border-radius: 24px;
+           font-size: 0.85rem;
+           background: white;
+       }
+
+
+       .add-actions {
+           display: flex;
+           gap: 0.8rem;
+       }
+
+
+       .small-btn {
+           padding: 8px 24px;
+           border-radius: 40px;
+           border: none;
+           font-weight: 600;
+           background: #2c7da0;
+           color: white;
+           cursor: pointer;
+           transition: 0.2s;
+       }
+
+
+       .small-btn.cancel {
+           background: #94a3b8;
+       }
+       .small-btn:hover {
+           transform: scale(0.96);
+       }
+
+
+       footer {
+           text-align: center;
+           font-size: 0.7rem;
+           padding: 1rem 0;
+           color: #4f6f8f;
+           border-top: 1px solid rgba(79, 111, 143, 0.2);
+           margin-top: auto;
+       }
+
+
+       @media (max-width: 700px) {
+           .nav-container {
+               flex-direction: column;
+               align-items: center;
+           }
+           .input-row {
+               flex-direction: column;
+           }
+           .tracker-card {
+               padding: 1.5rem;
+           }
+       }
+   </style>
+</head>
+<body>
+
+
+
+
+<nav class="navbar">
+   <div class="nav-container">
+       <div class="section-name">10-Sapphire</div>
+       <div class="nav-links">
+           <a href="classmates.html" class="nav-btn active">Classmates</a>
+           <a href="index.html" class="nav-btn">Attendance Tracker</a>
+           <a href="gallery.html" class="nav-btn">Gallery</a>
+       </div>
+   </div>
+</nav>
+
+
+
+
+<div class="main-wrapper">
+   <div class="tracker-card">
+       <h2>Grade 10 Classmates System</h2>
+       <div class="subhead">Add and view your classmates easily — stay connected</div>
+      
+       <div class="action-buttons">
+           <button id="add-classmate-btn" class="class-btn">+ Add Classmate</button>
+       </div>
+
+
+       <div id="dynamic-classlist"></div>
+      
+       <div id="add-panel" class="add-panel" style="display: none;">
+           <h4>Add New Classmate</h4>
+           <div class="input-row">
+               <input type="text" id="new-name" placeholder="Full name">
+               <input type="text" id="new-section" placeholder="Section (e.g. 10-Sapphire)">
+               <input type="text" id="new-subject" placeholder="Favorite Subject">
+           </div>
+           <div class="add-actions">
+               <button id="confirm-add" class="small-btn">✔ Add</button>
+               <button id="cancel-add" class="small-btn cancel">✖ Cancel</button>
+           </div>
+       </div>
+   </div>
+</div>
+
+
+
+
+<footer>Classmates System | Grade 10 - Sapphire</footer>
+
+
+<py-script src="main.py"></py-script>
+
+
+</body>
+</html>
+
+
+
